@@ -24,14 +24,24 @@ namespace WildstarPacketParser.Parsing.Parsers
             packet.ReadByte("LootRuleHarvest", 2u);
 
             for (int i = 0; i < memberCount; i++)
-                HandleGroupMemberInfo(packet, i, "GroupMemberInfo");
+                HandleGroupMemberInfo(packet, i, "MemberInfo");
+
+            StaticHandler.HandleTargetIdentity(packet, "LeaderIdentity");
+            packet.ReadUShort("Realm", 14u);
+
+            var unkCount = packet.ReadUInt("");
+            for (var i = 0; i < unkCount; i++)
+            {
+                packet.ReadUInt("UnkGroupJoin1", 32u, i);
+                packet.ReadUInt("UnkGroupJoin2", 32u, i);
+            }
         }
 
         public static void HandleGroupMemberInfo(Packet packet, params object[] idx)
         {
             StaticHandler.HandleTargetIdentity(packet, idx, "MemberIdentity");
             packet.ReadUInt("Flags", 32u, idx);
-            HandleGroupMember(packet, idx, "GroupMember");
+            HandleGroupMember(packet, idx, "Member");
             packet.ReadUInt("GroupIndex", 32u, idx);
         }
 
@@ -75,6 +85,15 @@ namespace WildstarPacketParser.Parsing.Parsers
                 packet.ReadUShort("Unk12", 15u, idx, i);
                 packet.ReadUShort("Unk13", 16u, idx, i);
             }
+        }
+
+        [Message(Opcodes.ServerGroupLeave)]
+        public static void HandleGroupLeave(Packet packet)
+        {
+            packet.ReadULong("GroupId");
+            packet.ReadUInt("MemberId");
+            StaticHandler.HandleTargetIdentity(packet, "TargetIdentity");
+            packet.ReadEnum<RemoveReason>("RemoveReason", 4);
         }
     }
 }

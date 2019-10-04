@@ -131,6 +131,9 @@
         ServerGroupInviteResult         = 0x041D,
         ServerGroupInviteReceived       = 0x041F,
         ServerGroupJoin                 = 0x0427,
+        ClientGroupKick                 = 0x0428,
+        ClientGroupLeave                = 0x042B,
+        ServerGroupLeave                = 0x0450,
         Server0497                      = 0x0497, // guild info
         ClientCastSpell                 = 0x04DB,
         ServerHousingResidenceDecor     = 0x04DE,

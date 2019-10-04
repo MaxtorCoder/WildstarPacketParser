@@ -7,7 +7,7 @@ using WildstarPacketParser.Network.Message;
 
 namespace WildstarPacketParser.Network
 {
-    public class GamePacketReader : IDisposable
+    public class Packet : IDisposable
     {
         public uint BytePosition
         {
@@ -25,7 +25,7 @@ namespace WildstarPacketParser.Network
         private byte currentBitValue;
         private readonly Stream stream;
 
-        public GamePacketReader(Stream input)
+        public Packet(Stream input)
         {
             stream = input;
             ResetBits();
@@ -144,7 +144,7 @@ namespace WildstarPacketParser.Network
             return (T)Enum.ToObject(typeof(T), ReadBits(bits));
         }
 
-        private byte[] ReadBytes(uint length)
+        public byte[] ReadBytes(uint length)
         {
             byte[] data = new byte[length];
             for (uint i = 0u; i < length; i++)
@@ -234,7 +234,9 @@ namespace WildstarPacketParser.Network
 
         public T AddValue<T>(string name, T obj, params object[] indexes)
         {
-            WriteLine($"{GetIndexString(indexes)}{name}: {obj}");
+            if (name != string.Empty || name != "")
+                WriteLine($"{GetIndexString(indexes)}{name}: {obj}");
+
             return obj;
         }
 
@@ -336,6 +338,13 @@ namespace WildstarPacketParser.Network
         public float ReadPackedFloat(string name, params object[] indexes)
         {
             var val = ReadPackedFloat();
+            AddValue(name, val, indexes);
+            return val;
+        }
+
+        public bool ReadBool(string name, params object[] indexes)
+        {
+            var val = ReadBit();
             AddValue(name, val, indexes);
             return val;
         }

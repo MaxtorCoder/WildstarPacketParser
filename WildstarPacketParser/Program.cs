@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using WildstarPacketParser.Network;
 using WildstarPacketParser.Network.Message;
-using WildstarPacketParser.Parsing.Structures;
 
 namespace WildstarPacketParser
 {
@@ -11,13 +10,13 @@ namespace WildstarPacketParser
     {
         static void Main(string[] args)
         {
-            if (args.Length < 1)
-            {
-                Console.WriteLine("Please put in a file.");
-                return;
-            }
+            // if (args.Length < 1)
+            // {
+            //     Console.WriteLine("Please put in a file.");
+            //     return;
+            // }
 
-            string sniff = args[0];
+            string sniff = "party_inv_accept.awps";
 
             Console.WriteLine("Wildstar Packet Parser");
             Console.WriteLine("Press Enter to Start");
@@ -40,14 +39,14 @@ namespace WildstarPacketParser
                     Console.WriteLine($"Opcode: 0x{opcode:X4} ({(Opcodes)opcode})");
 
                     using (var stream = new MemoryStream(data))
-                    using (var reader = new GamePacketReader(stream))
+                    using (var reader = new Packet(stream))
                     {
                         reader.AddHeader(direction, opcode, data.Length, number);
-                        var message = MessageManager.GetMessage((Opcodes)opcode);
+                        var message = MessageManager.GetMessageHandler((Opcodes)opcode);
                         if (message == null)
                             reader.Write(Extensions.ByteArrayToHexTable(data));
                         else
-                            message.Read(reader);
+                            message.Invoke(reader);
 
                         sw.Write(reader.Writer);
                     }

@@ -2,7 +2,7 @@
 
 namespace WildstarPacketParser.Network.Message
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Method)]
     public class MessageAttribute : Attribute
     {
         public Opcodes Opcode { get; }

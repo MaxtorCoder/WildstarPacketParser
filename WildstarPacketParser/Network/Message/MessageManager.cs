@@ -8,10 +8,11 @@ using System.Text;
 
 namespace WildstarPacketParser.Network.Message
 {
+    public delegate void MessageHandlerDelegate(Packet message);
+
     public static class MessageManager
     {
-        private delegate IReadable MessageFactoryDelegate();
-        private static ImmutableDictionary<Opcodes, MessageFactoryDelegate> clientMessageFactories;
+        private static ImmutableDictionary<Opcodes, MessageHandlerDelegate> clientMessageHandlers;
 
         public static void Initialise()
         {
@@ -20,28 +21,44 @@ namespace WildstarPacketParser.Network.Message
 
         private static void InitialiseMessages()
         {
-            var messageFactories = new Dictionary<Opcodes, MessageFactoryDelegate>();
+            var messageFactories = new Dictionary<Opcodes, MessageHandlerDelegate>();
 
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
-                MessageAttribute attribute = type.GetCustomAttribute<MessageAttribute>();
-                if (attribute == null)
-                    continue;
-
-                if (typeof(IReadable).IsAssignableFrom(type))
+                foreach (var method in type.GetMethods())
                 {
-                    NewExpression @new = Expression.New(type.GetConstructor(Type.EmptyTypes));
-                    messageFactories.Add(attribute.Opcode, Expression.Lambda<MessageFactoryDelegate>(@new).Compile());
+                    if (method.DeclaringType != type)
+                        continue;
+
+                    var attribute = method.GetCustomAttribute<MessageAttribute>();
+                    if (attribute == null)
+                        continue;
+
+                    var readerParameter = Expression.Parameter(typeof(Packet));
+                    var paramInfo = method.GetParameters();
+
+                    if (method.IsStatic)
+                    {
+                        var call = Expression.Call(method, Expression.Convert(readerParameter, paramInfo[0].ParameterType));
+                        var lambda = Expression.Lambda<MessageHandlerDelegate>(call, readerParameter);
+                        messageFactories.Add(attribute.Opcode, lambda.Compile());
+                    }
+                    else
+                    {
+                        var call = Expression.Call(Expression.Convert(readerParameter, type), method);
+                        var lambda = Expression.Lambda<MessageHandlerDelegate>(call, readerParameter);
+                        messageFactories.Add(attribute.Opcode, lambda.Compile());
+                    }
                 }
             }
 
-            clientMessageFactories = messageFactories.ToImmutableDictionary();
+            clientMessageHandlers = messageFactories.ToImmutableDictionary();
         }
 
-        public static IReadable GetMessage(Opcodes opcode)
+        public static MessageHandlerDelegate GetMessageHandler(Opcodes opcode)
         {
-            return clientMessageFactories.TryGetValue(opcode, out MessageFactoryDelegate factory)
-                ? factory.Invoke() : null;
+            return clientMessageHandlers.TryGetValue(opcode, out MessageHandlerDelegate handler)
+                ? handler : null;
         }
     }
 }

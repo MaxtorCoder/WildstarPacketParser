@@ -10,13 +10,13 @@ namespace WildstarPacketParser
     {
         static void Main(string[] args)
         {
-            // if (args.Length < 1)
-            // {
-            //     Console.WriteLine("Please put in a file.");
-            //     return;
-            // }
+            if (args.Length < 1)
+            {
+                Console.WriteLine("Please put in a file.");
+                return;
+            }
 
-            string sniff = "party_inv_accept.awps";
+            string sniff = args[0];
 
             Console.WriteLine("Wildstar Packet Parser");
             Console.WriteLine("Press Enter to Start");

@@ -95,5 +95,41 @@ namespace WildstarPacketParser.Parsing.Parsers
             StaticHandler.HandleTargetIdentity(packet, "TargetIdentity");
             packet.ReadEnum<RemoveReason>("RemoveReason", 4);
         }
+
+        [Message(Opcodes.ServerGroupStatUpdate)]
+        public static void HandleGroupStatUpdate(Packet packet)
+        {
+            packet.ReadULong("GroupId");
+            StaticHandler.HandleTargetIdentity(packet, "PlayerIdentity");
+            packet.ReadUInt("Level", 7);
+            packet.ReadUInt("EffectiveLevel", 7);
+
+            packet.ReadUInt("Unk1", 17);
+            packet.ReadUInt("Unk2", 16);
+
+            for (var i = 0; i < 5; i++)
+            {
+                packet.ReadUShort("Unk3", 16u, i);
+                packet.ReadByte("Unk4", 8u, i);
+            }
+
+            packet.ReadUShort("Health");
+            packet.ReadUShort("HealthMax");
+            packet.ReadUShort("Shield");
+            packet.ReadUShort("ShieldMax");
+            packet.ReadUShort("InterruptArmor");
+            packet.ReadUShort("InterruptArmorMax");
+            packet.ReadUShort("Absorption");
+            packet.ReadUShort("AbsorptionMax");
+            packet.ReadUShort("Mana");
+            packet.ReadUShort("ManaMax");
+            packet.ReadUShort("HealingAbsorb");
+            packet.ReadUShort("HealingAbsorbMax");
+
+            packet.ReadUInt("Unk5");
+            packet.ReadUInt("Unk6");
+
+            packet.ReadUInt("Unk7", 3);
+        }
     }
 }

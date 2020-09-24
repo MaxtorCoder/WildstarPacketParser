@@ -317,7 +317,7 @@ namespace WildstarPacketParser.Network
         public T ReadEnum<T>(string name, uint bits = 64u, params object[] indexes) where T : Enum
         {
             var val = ReadEnum<T>(bits);
-            AddValue(name, val, indexes);
+            AddValue(name, $"{Convert.ToInt64(val)} ({val})", indexes);
             return (T)Enum.ToObject(typeof(T), val);
         }
 

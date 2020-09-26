@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,13 +19,15 @@ namespace WildstarPacketParser.Network
         }
         public uint BytesRemaining => stream?.Remaining() ?? 0u;
         public StringBuilder Writer;
+        public Opcodes Opcode { get; set; }
 
         private byte currentBitPosition;
         private byte currentBitValue;
         private readonly Stream stream;
 
-        public Packet(Stream input)
+        public Packet(Stream input, Opcodes opcode)
         {
+            Opcode = opcode;
             stream = input;
             ResetBits();
 
@@ -53,7 +54,13 @@ namespace WildstarPacketParser.Network
             if (currentBitPosition > 7)
             {
                 currentBitPosition = 0;
-                currentBitValue = (byte)stream.ReadByte();
+
+                // Catch Out of Range exception
+                var val = stream.ReadByte();
+                if (val == -1)
+                    throw new IndexOutOfRangeException("Index was outside the bounds of the array.");
+
+                currentBitValue = (byte)val;
             }
 
             return ((currentBitValue >> currentBitPosition) & 1) != 0;
@@ -349,5 +356,12 @@ namespace WildstarPacketParser.Network
             return val;
         }
         #endregion
+    }
+
+    public struct PacketStruct
+    {
+        public string Direction;
+        public byte[] Data;
+        public uint Opcode;
     }
 }

@@ -31,10 +31,10 @@ namespace WildstarPacketParser.Parsing.Parsers
                 switch (command)
                 {
                     case EntityCommand.SetModeKeys:
-                        StaticHandler.ReadMoveData(packet, i, "MoveData");
+                        StaticHandler.ReadMoveData(packet, idx, i, "MoveData");
                         break;
                     case EntityCommand.SetPositionKeys:
-                        StaticHandler.ReadVector3(packet, i, "PositionData");
+                        StaticHandler.ReadVector3(packet, idx, i, "PositionData");
                         break;
                 }
             }
@@ -66,10 +66,10 @@ namespace WildstarPacketParser.Parsing.Parsers
                         packet.ReadByte("Unused", 1, i);
                         break;
                     case EntityCommand.SetModeKeys:
-                        ReadCommandSetKeys(packet, command, i, "ModeKeys");
+                        ReadCommandSetMoveKeys(packet, command, i, "ModeKeys");
                         break;
                     case EntityCommand.SetPositionKeys:
-                        ReadCommandSetKeys(packet, command, i, "PositionKeys");
+                        ReadCommandSetMoveKeys(packet, command, i, "PositionKeys");
                         break;
                     case EntityCommand.SetMove:
                         StaticHandler.ReadMoveData(packet, i, "MoveData");
@@ -106,6 +106,13 @@ namespace WildstarPacketParser.Parsing.Parsers
                         break;
                 }
             }
+        }
+
+        [Message(Opcodes.ServerEntityGroupAssociation)]
+        public static void HandleEntityGroupAssociation(Packet packet)
+        {
+            packet.ReadUInt("UnitId");
+            packet.ReadULong("GroupId");
         }
     }
 }

@@ -14,7 +14,7 @@ namespace WildstarPacketParser.Parsing.Parsers
         {
             StaticHandler.ReadTargetIdentity(packet, "PlayerJoined");
             packet.ReadULong("GroupId");
-            packet.ReadUInt("Unk0");
+            packet.ReadUInt("Flags");
             var memberCount = packet.ReadUInt("MemberCount");
             packet.ReadUInt("MaxSize");
 
@@ -40,7 +40,7 @@ namespace WildstarPacketParser.Parsing.Parsers
         public static void ReadMemberGroupInfo(Packet packet, params object[] idx)
         {
             StaticHandler.ReadTargetIdentity(packet, idx, "MemberIdentity");
-            packet.ReadUInt("Flags", 32u, idx);
+            packet.ReadEnum<GroupMemberInfoFlags>("Flags", 32u, idx);
             ReadGroupMember(packet, idx, "Member");
             packet.ReadUInt("GroupIndex", 32u, idx);
         }
@@ -117,40 +117,40 @@ namespace WildstarPacketParser.Parsing.Parsers
                 ReadGroupMember(packet, i, "Member");
         }
 
-        // [Message(Opcodes.ServerGroupStatUpdate)]
-        // public static void HandleGroupStatUpdate(Packet packet)
-        // {
-        //     packet.ReadULong("GroupId");
-        //     StaticHandler.HandleTargetIdentity(packet, "PlayerIdentity");
-        //     packet.ReadUInt("Level", 7);
-        //     packet.ReadUInt("EffectiveLevel", 7);
-        // 
-        //     packet.ReadUInt("Unk1", 17);
-        //     packet.ReadUInt("Unk2", 16);
-        // 
-        //     for (var i = 0; i < 5; i++)
-        //     {
-        //         packet.ReadUShort("Unk3", 16u, i);
-        //         packet.ReadByte("Unk4", 8u, i);
-        //     }
-        // 
-        //     packet.ReadUShort("Health");
-        //     packet.ReadUShort("HealthMax");
-        //     packet.ReadUShort("Shield");
-        //     packet.ReadUShort("ShieldMax");
-        //     packet.ReadUShort("InterruptArmor");
-        //     packet.ReadUShort("InterruptArmorMax");
-        //     packet.ReadUShort("Absorption");
-        //     packet.ReadUShort("AbsorptionMax");
-        //     packet.ReadUShort("Mana");
-        //     packet.ReadUShort("ManaMax");
-        //     packet.ReadUShort("HealingAbsorb");
-        //     packet.ReadUShort("HealingAbsorbMax");
-        // 
-        //     packet.ReadUInt("Unk5");
-        //     packet.ReadUInt("Unk6");
-        // 
-        //     packet.ReadUInt("Unk7", 3);
-        // }
+        [Message(Opcodes.ServerGroupMemberStatUpdate)]
+        public static void HandleGroupStatUpdate(Packet packet)
+        {
+            packet.ReadULong("GroupId");
+            StaticHandler.ReadTargetIdentity(packet, "PlayerIdentity");
+            packet.ReadUInt("Level", 7);
+            packet.ReadUInt("EffectiveLevel", 7);
+        
+            packet.ReadUInt("Unk1", 17);
+            packet.ReadUInt("Unk2", 16);
+        
+            for (var i = 0; i < 5; i++)
+            {
+                packet.ReadUShort("Unk3", 16u, i);
+                packet.ReadByte("Unk4", 8u, i);
+            }
+        
+            packet.ReadUShort("Health");
+            packet.ReadUShort("HealthMax");
+            packet.ReadUShort("Shield");
+            packet.ReadUShort("ShieldMax");
+            packet.ReadUShort("InterruptArmor");
+            packet.ReadUShort("InterruptArmorMax");
+            packet.ReadUShort("Absorption");
+            packet.ReadUShort("AbsorptionMax");
+            packet.ReadUShort("Mana");
+            packet.ReadUShort("ManaMax");
+            packet.ReadUShort("HealingAbsorb");
+            packet.ReadUShort("HealingAbsorbMax");
+        
+            packet.ReadUInt("Unk5");
+            packet.ReadUInt("Unk6");
+        
+            packet.ReadUInt("Unk7", 3);
+        }
     }
 }

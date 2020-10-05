@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using WildstarPacketParser.Network;
 using WildstarPacketParser.Network.Message;
 
@@ -11,17 +9,21 @@ namespace WildstarPacketParser
     class Parser
     {
         static List<PacketStruct> packets = new List<PacketStruct>();
-        static object syncObj = new object();
 
         static void Main(string[] args)
         {
-            // if (args.Length < 1)
-            // {
-            //     Console.WriteLine("Please put in a file.");
-            //     return;
-            // }
+            if (args.Length < 1)
+            {
+                Console.WriteLine("Please put in a file.");
+                return;
+            }
 
-            string sniff = @"E:\Wildstar\NexusForever\Source\NexusForever.WorldServer\bin\Debug\netcoreapp3.1\packetlog.awps";
+            string sniff = args[0];
+            if (!File.Exists(sniff))
+            {
+                Console.WriteLine("File does not exist, please put in a new file.");
+                return;
+            }
 
             Console.WriteLine("Wildstar Packet Parser");
             Console.WriteLine("Press Enter to Start");

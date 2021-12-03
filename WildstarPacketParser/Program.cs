@@ -1,98 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using WildstarPacketParser.Network;
+﻿using WildstarPacketParser.Network;
 using WildstarPacketParser.Network.Message;
+using WildstarPacketParser.Parsing;
 
-namespace WildstarPacketParser
+namespace WildstarPacketParser;
+
+class Parser
 {
-    class Parser
+    static readonly List<PacketStruct> _packets = new();
+
+    static void Main(string[] args)
     {
-        static List<PacketStruct> packets = new List<PacketStruct>();
+        // if (args.Length < 1)
+        // {
+        //     Console.WriteLine("Please put in a file.");
+        //     return;
+        // }
+        //
+        // string sniff = args[0];
+        // if (!File.Exists(sniff))
+        // {
+        //     Console.WriteLine("File does not exist, please put in a new file.");
+        //     return;
+        // }
 
-        static void Main(string[] args)
+        var sniff = "packetsniff.awps";
+
+        Console.WriteLine("Wildstar Packet Parser");
+        Console.WriteLine("Press Enter to Start");
+        Console.Read();
+        MessageManager.Initialise();
+
+        using (var sr = new StreamReader(sniff))
         {
-            if (args.Length < 1)
+            while (!sr.EndOfStream)
             {
-                Console.WriteLine("Please put in a file.");
-                return;
-            }
+                var str = sr.ReadLine();
+                var arr = str.Split(new char[] { ' ', ';' });
 
-            string sniff = args[0];
-            if (!File.Exists(sniff))
-            {
-                Console.WriteLine("File does not exist, please put in a new file.");
-                return;
-            }
+                var direction   = arr[3];
+                var opcode      = (Opcodes)uint.Parse(arr[5]);
+                var data        = arr[7].ToByteArray();
 
-            Console.WriteLine("Wildstar Packet Parser");
-            Console.WriteLine("Press Enter to Start");
-            Console.Read();
-            MessageManager.Initialise();
-
-            using (var sr = new StreamReader(sniff))
-            using (var sw = new StreamWriter(sniff.Replace(".awps", "_parsed.txt")))
-            {
-                while (!sr.EndOfStream)
+                _packets.Add(new PacketStruct
                 {
-                    var str = sr.ReadLine();
-                    var arr = str.Split(' ', ';');
-
-                    var direction   = arr[3];
-                    var opcode      = uint.Parse(arr[5]);
-                    var data        = arr[7].ToByteArray();
-
-                    packets.Add(new PacketStruct
-                    {
-                        Direction = direction,
-                        Opcode = opcode,
-                        Data = data
-                    });
-                }
+                    Direction = direction,
+                    Opcode = opcode,
+                    Data = data
+                });
             }
+        }
 
-            uint number = 0;
-            using (var sw = new StreamWriter(sniff.Replace(".awps", "_parsed.txt")))
+        uint number = 0;
+        using (var sw = new StreamWriter(sniff.Replace(".awps", "_parsed.txt")))
+        {
+            foreach (var packet in _packets)
             {
-                foreach (var packet in packets)
-                {
-                    Console.WriteLine($"Parsing opcode: 0x{packet.Opcode:X4} ({(Opcodes)packet.Opcode})");
-
-                    using (var stream = new MemoryStream(packet.Data))
-                    using (var reader = new Packet(stream, (Opcodes)packet.Opcode))
-                    {
-                        reader.AddHeader(packet.Direction, packet.Opcode, packet.Data.Length, number);
-
-                        var message = MessageManager.GetMessageHandler((Opcodes)packet.Opcode);
-                        if (message == null)
-                            reader.Write(Extensions.ByteArrayToHexTable(packet.Data));
-                        else
-                        {
-                            try
-                            {
-                                message(reader);
-
-                                if (reader.BytesRemaining > 0)
-                                {
-                                    reader.WriteLine($"Packet not fully read! Current position: {reader.BytePosition} Length: {packet.Data.Length} Bytes remaining: {reader.BytesRemaining}.");
-
-                                    if (packet.Data.Length < 300)
-                                        reader.Write(Extensions.ByteArrayToHexTable(packet.Data));
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                reader.WriteLine(ex.GetType().ToString());
-                                reader.WriteLine(ex.Message);
-                                reader.WriteLine(ex.StackTrace);
-                            }
-                        }
-
-                        sw.Write(reader.Writer);
-                    }
-
-                    number++;
-                }
+                // Console.WriteLine($"Parsing opcode: 0x{packet.Opcode:X4} ({(Opcodes)packet.Opcode})");
+                PacketParser.ParsePacket(packet, number++, sw);
             }
         }
     }

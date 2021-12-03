@@ -1,14 +1,13 @@
-﻿namespace WildstarPacketParser.Constants
+﻿namespace WildstarPacketParser.Constants;
+
+public enum Race
 {
-    public enum Race
-    {
-        Human = 1,
-        Eshara = 2,
-        Granok = 3,
-        Aurin = 4,
-        Draken = 5,
-        Mechari = 12,
-        Chua = 13,
-        Mordesh = 16
-    }
+    Human       = 1,
+    Eshara      = 2,
+    Granok      = 3,
+    Aurin       = 4,
+    Draken      = 5,
+    Mechari     = 12,
+    Chua        = 13,
+    Mordesh     = 16
 }

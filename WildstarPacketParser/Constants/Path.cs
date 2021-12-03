@@ -1,10 +1,9 @@
-﻿namespace WildstarPacketParser.Constants
+﻿namespace WildstarPacketParser.Constants;
+
+public enum Path
 {
-    public enum Path
-    {
-        Soldier,
-        Settler,
-        Scientist,
-        Explorer
-    }
+    Soldier,
+    Settler,
+    Scientist,
+    Explorer
 }

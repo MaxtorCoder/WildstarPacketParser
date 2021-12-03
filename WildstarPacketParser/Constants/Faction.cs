@@ -1,8 +1,7 @@
-﻿namespace WildstarPacketParser.Constants
+﻿namespace WildstarPacketParser.Constants;
+
+public enum Faction
 {
-    public enum Faction
-    {
-        Dominion = 166,
-        Exile = 167
-    }
+    Dominion    = 166,
+    Exile       = 167
 }

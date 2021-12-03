@@ -1,8 +1,7 @@
-﻿namespace WildstarPacketParser.Constants
+﻿namespace WildstarPacketParser.Constants;
+
+public enum HarvestLootRule
 {
-    public enum HarvestLootRule
-    {
-        RoundRobin  = 0,
-        FirstTagger = 1
-    }
+    RoundRobin  = 0,
+    FirstTagger = 1
 }

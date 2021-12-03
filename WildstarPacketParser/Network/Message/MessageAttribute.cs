@@ -1,15 +1,12 @@
-﻿using System;
+﻿namespace WildstarPacketParser.Network.Message;
 
-namespace WildstarPacketParser.Network.Message
+[AttributeUsage(AttributeTargets.Method)]
+public class MessageAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public class MessageAttribute : Attribute
-    {
-        public Opcodes Opcode { get; }
+    public Opcodes Opcode { get; }
 
-        public MessageAttribute(Opcodes opcode)
-        {
-            Opcode = opcode;
-        }
+    public MessageAttribute(Opcodes opcode)
+    {
+        Opcode = opcode;
     }
 }

@@ -1,12 +1,11 @@
-﻿namespace WildstarPacketParser.Constants
+﻿namespace WildstarPacketParser.Constants;
+
+public enum Class
 {
-    public enum Class
-    {
-        Warrior = 1,
-        Engineer = 2,
-        Esper = 3,
-        Medic = 4,
-        Stalker = 5,
-        Spellslinger = 7
-    }
+    Warrior         = 1,
+    Engineer        = 2,
+    Esper           = 3,
+    Medic           = 4,
+    Stalker         = 5,
+    Spellslinger    = 7
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace WildstarPacketParser.Network.Message;
 
-namespace WildstarPacketParser.Network.Message
+public interface IReadable
 {
-    public interface IReadable
-    {
-        void Read(Packet reader, string idx);
-    }
+    void Read(Packet reader, string idx);
 }

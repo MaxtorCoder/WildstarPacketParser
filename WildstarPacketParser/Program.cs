@@ -10,20 +10,18 @@ class Parser
 
     static void Main(string[] args)
     {
-        // if (args.Length < 1)
-        // {
-        //     Console.WriteLine("Please put in a file.");
-        //     return;
-        // }
-        //
-        // string sniff = args[0];
-        // if (!File.Exists(sniff))
-        // {
-        //     Console.WriteLine("File does not exist, please put in a new file.");
-        //     return;
-        // }
+        if (args.Length < 1)
+        {
+            Console.WriteLine("Please put in a file.");
+            return;
+        }
 
-        var sniff = "packetsniff.awps";
+        string sniff = args[0];
+        if (!File.Exists(sniff))
+        {
+            Console.WriteLine("File does not exist, please put in a new file.");
+            return;
+        }
 
         Console.WriteLine("Wildstar Packet Parser");
         Console.WriteLine("Press Enter to Start");

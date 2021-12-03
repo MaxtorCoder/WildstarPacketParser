@@ -12,21 +12,12 @@ public class Packet : IDisposable
     }
 
     public StringBuilder Writer { get; private set; } = new();
-    public Opcodes Opcode { get; set; }
 
     public uint BytesRemaining => _stream?.Remaining() ?? 0u;
 
     private byte _currentBitPosition;
     private byte _currentBitValue;
     private readonly MemoryStream _stream;
-
-    public Packet(MemoryStream input, Opcodes opcode)
-    {
-        _stream = input;
-        ResetBits();
-
-        Opcode = opcode;
-    }
 
     public Packet(MemoryStream input)
     {
